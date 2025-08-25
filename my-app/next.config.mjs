@@ -1,4 +1,5 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {};
+import createTranspileModules from 'next-transpile-modules';
 
-export default nextConfig;
+const withTM = createTranspileModules(['hello_world']);
+
+export default withTM({});

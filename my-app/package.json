@@ -9,15 +9,18 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@stellar/freighter-api": "^1.5.1",
+    "hello_world": "file:../packages/hello_world",
+    "next": "15.5.0",
+    "next-transpile-modules": "^10.0.1",
     "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "next": "15.5.0"
+    "react-dom": "19.1.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
     "eslint": "^9",
     "eslint-config-next": "15.5.0",
-    "@eslint/eslintrc": "^3"
+    "tailwindcss": "^4"
   }
 }

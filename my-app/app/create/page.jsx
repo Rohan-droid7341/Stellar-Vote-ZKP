@@ -1,39 +1,52 @@
-"use client";
-import { useState } from "react";
-import { invokeContract } from "../../lib/soroban";
+'use client';
+import React, { useState } from 'react';
+import { createWorkspace } from '../../lib/soroban';
+import { getPublicKey } from '@stellar/freighter-api';
 
-export default function CreateWorkspacePage() {
-  const [name, setName] = useState("");
-  const [result, setResult] = useState(null);
 
-  async function handleCreate() {
-    const res = await invokeContract("create_workspace", [name]);
-    setResult(res);
-  }
+export default function CreateWorkspace() {
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [workspaceId, setWorkspaceId] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError('');
+    setWorkspaceId(null);
+
+    try {
+      const userKey = await getPublicKey();
+      const id = await createWorkspace(name, description, userKey);
+      setWorkspaceId(id);
+    } catch (err) {
+      setError(err.message);
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-gray-800 text-white">
-      <h2 className="text-2xl mb-4">Create a Workspace</h2>
-      <input
-        type="text"
-        placeholder="Workspace name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        className="px-4 py-2 rounded mb-4 text-black"
-      />
-      <button
-        onClick={handleCreate}
-        className="px-6 py-3 bg-blue-600 rounded-xl hover:bg-blue-700"
-      >
-        Create
-      </button>
-
-      {result && (
-        <div className="mt-6 bg-gray-700 p-4 rounded-lg w-96 break-words">
-          <h3 className="font-bold">Result:</h3>
-          <pre>{JSON.stringify(result, null, 2)}</pre>
+    <div>
+      <h3>Create a New Workspace</h3>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Name: </label>
+          <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
         </div>
-      )}
+        <div>
+          <label>Description: </label>
+          <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} required />
+        </div>
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? 'Creating...' : 'Create Workspace'}
+        </button>
+      </form>
+      {workspaceId && <p>Workspace created with ID: {workspaceId}</p>}
+      {error && <p style={{ color: 'red' }}>Error: {error}</p>}
     </div>
   );
 }
